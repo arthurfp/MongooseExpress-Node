@@ -1,37 +1,15 @@
 const express = require('express')
+const { login, register, getCurrentUser, updateCurrentUser } = require('../controller/user')
+const userValidator = require('../validator/user')
 
 const router = express.Router()
 
-router.post('/users/login', async (req, res, next) => {
-    try {
-        res.send('post /users/login')
-    } catch (error) {
-        next(error)
-    }
-})
+router.post('/users/login', login)
 
-router.post('/users', async (req, res, next) => {
-    try {
-        res.send('post /users')
-    } catch (error) {
-        next(error)
-    }
-})
+router.post('/users', userValidator.register, register)
 
-router.get('/user', async (req, res, next) => {
-    try {
-        res.send('get /user')
-    } catch (error) {
-        next(error)
-    }
-})
+router.get('/user', getCurrentUser)
 
-router.put('/user', async (req, res, next) => {
-    try {
-        res.send('put /user')
-    } catch (error) {
-        next(error)
-    }
-})
+router.put('/user', updateCurrentUser)
 
 module.exports = router
