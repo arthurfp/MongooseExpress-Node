@@ -17,6 +17,16 @@ exports.register = validate([
         .bail()
         .custom(async email => {
             const user = await User.findOne({ email })
-            if (user) { return Promise.reject('email already exists') }
+            if (user) { return Promise.reject('E-mail already exists') }
         })
 ])
+
+exports.login = [
+    validate([
+        body('user.email').notEmpty().withMessage('E-mail can not be empty'),
+        body('user.password').notEmpty().withMessage('password can not be blank'),
+    ]),
+    validate([
+        
+    ])
+]
