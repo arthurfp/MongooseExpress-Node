@@ -1,78 +1,27 @@
 const express = require('express')
+const articleCtrl = require('../controller/article')
+const auth = require('../middleware/auth')
+const articleValidator = require('../validator/article')
 
 const router = express.Router()
 
-router.get('/', async (req, res, next) => {
-    try {
-        res.send('get /articles')
-    } catch (error) {
-        next(error)
-    }
-})
+router.get('/', articleCtrl.getArticles)
 
-router.get('/feed', async (req, res, next) => {
-    try {
-        res.send('get /articles/feed')
-    } catch (error) {
-        next(error)
-    }
-})
+router.get('/feed', articleCtrl.getFeedArticles)
 
-router.get('/:slug', async (req, res, next) => {
-    try {
-        res.send('get /articles/:slug')
-    } catch (error) {
-        next(error)
-    }
-})
+router.get('/:slug', articleValidator.getArticle, articleCtrl.getArticle)
 
-router.post('/', async (req, res, next) => {
-    try {
-        res.send('post /articles')
-    } catch (error) {
-        next(error)
-    }
-})
+router.post('/', auth, articleValidator.createArticle, articleCtrl.createArticle)
 
-router.put('/:slug', async (req, res, next) => {
-    try {
-        res.send('put /articles/:slug')
-    } catch (error) {
-        next(error)
-    }
-})
+router.put('/:slug', articleCtrl.updateArticle)
 
-router.delete('/:slug', async (req, res, next) => {
-    try {
-        res.send('delete /articles/:slug')
-    } catch (error) {
-        next(error)
-    }
-})
+router.delete('/:slug', articleCtrl.deleteArticle)
 
-router.post('/:slug/comments', async (req, res, next) => {
-    try {
-        res.send('post /articles/:slug/comments')
-    } catch (error) {
-        next(error)
-    }
-})
+router.post('/:slug/comments', articleCtrl.createArticleComment)
 
-router.get('/:slug/comments', async (req, res, next) => {
-    try {
-        res.send('get /articles/:slug/comments')
-    } catch (error) {
-        next(error)
-    }
-})
+router.get('/:slug/comments', articleCtrl.getArticleComments)
 
-router.delete('/:slug/comments/:id', async (req, res, next) => {
-    try {
-        res.send('delete /articles/:slug/comments/:id')
-    } catch (error) {
-        next(error)
-    }
-})
+router.delete('/:slug/comments/:id', articleCtrl.deleteArticleComment)
 
 router.post('/:slug/favorite', async (req, res, next) => {
     try {

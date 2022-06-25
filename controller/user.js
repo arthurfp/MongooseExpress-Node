@@ -1,8 +1,21 @@
 const { User } = require('../model')
+const jwt = require('../util/jwt')
+const { jwtSecret } = require('../config/config.default')
 
 exports.login = async (req, res, next) => {
     try {
-        res.send('post /users/login')
+        const user = req.user.toJSON()
+        const token = await jwt.sign({
+            userId: user._id
+        }, jwtSecret, {
+            expiresIn: 60 * 60 * 24
+        })
+
+        delete user.password
+        res.status(200).json({
+            ...user,
+            token
+        })
     } catch (error) {
         next(error)
     }
@@ -28,7 +41,9 @@ exports.register = async (req, res, next) => {
 
 exports.getCurrentUser = async (req, res, next) => {
     try {
-        res.send('post /users/login')
+        res.status(200).json({
+            user: req.user
+        })
     } catch (error) {
         next(error)
     }
@@ -36,7 +51,7 @@ exports.getCurrentUser = async (req, res, next) => {
 
 exports.updateCurrentUser = async (req, res, next) => {
     try {
-        res.send('post /users/login')
+        res.send('put /users/login')
     } catch (error) {
         next(error)
     }
