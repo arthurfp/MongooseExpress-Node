@@ -13,9 +13,9 @@ router.get('/:slug', articleValidator.getArticle, articleCtrl.getArticle)
 
 router.post('/', auth, articleValidator.createArticle, articleCtrl.createArticle)
 
-router.put('/:slug', articleCtrl.updateArticle)
+router.put('/:slug', auth, articleValidator.updateArticle, articleCtrl.updateArticle)
 
-router.delete('/:slug', articleCtrl.deleteArticle)
+router.delete('/:slug', auth,articleValidator.deleteArticle, articleCtrl.deleteArticle)
 
 router.post('/:slug/comments', articleCtrl.createArticleComment)
 

@@ -1,6 +1,7 @@
 const { body, param } = require('express-validator')
 const validate = require('../middleware/validate')
 const mongoose = require('mongoose')
+const { Article } = require('../model')
 
 exports.createArticle = validate([
     body('article.title').notEmpty().withMessage('Article title cannot be empty'),
@@ -9,10 +10,28 @@ exports.createArticle = validate([
 ])
 
 exports.getArticle = validate([
-    param('slug').custom(value => {
-        if (!mongoose.isValidObjectId(value)) {
-            throw new Error('Article ID type error')
-        }
-        return true
-    })
+    validate.isValidObjectId(['params'], 'slug')
 ])
+
+exports.updateArticle = [
+    validate([
+        validate.isValidObjectId(['params'], 'slug')
+    ]),
+    async (req, res, next) => {
+        const articleId = req.params.slug
+        const article = await Article.findById(articleId)
+        req.article = article
+        if (!article) {
+            return res.status(404).end()
+        }
+        next()
+    },
+    async (req, res, next) => {
+        if (req.user._id.toString() !== req.article.author.toString()) {
+            return res.status(403).end()
+        }
+        next()
+    }
+]
+
+exports.deleteArticle = exports.updateArticle
