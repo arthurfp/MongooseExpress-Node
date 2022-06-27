@@ -3,44 +3,45 @@ const validate = require('../middleware/validate')
 const { User } = require('../model')
 const md5 = require('../util/md5')
 
-exports.register = validate([
+exports.register = validate([ // 1. Configure validation rules
     body('user.username')
-        .notEmpty().withMessage('Username can not be empty')
-        .bail()
-        .custom(async value => {
+        .notEmpty().withMessage('Username cannot be empty')
+        .bail() // stop running validation if previous validation fails, preventing access to database or external API
+        .custom(async value => { // custom validation rules
             const user = await User.findOne({ username: value })
             if (user) { return Promise.reject('Username already exists') }
         }),
-    body('user.password').notEmpty().withMessage('password can not be blank'),
+    body('user.password').notEmpty().withMessage('Password cannot be empty'),
     body('user.email')
-        .notEmpty().withMessage('E-mail can not be empty')
-        .isEmail().withMessage('E-mail format is incorrect')
-        .bail()
-        .custom(async email => {
+        .notEmpty().withMessage('Email cannot be empty')
+        .isEmail().withMessage('Email format is incorrect')
+        .bail() // stop running validation if previous validation fails, preventing access to database or external API
+        .custom(async email => { // custom validation rules
             const user = await User.findOne({ email })
-            if (user) { return Promise.reject('E-mail already exists') }
+            if (user) { return Promise.reject('Email already exists') }
         })
 ])
 
 exports.login = [
     validate([
-        body('user.email').notEmpty().withMessage('E-mail can not be empty'),
-        body('user.password').notEmpty().withMessage('password can not be blank'),
+        body('user.email').notEmpty().withMessage('Email cannot be empty'),
+        body('user.password').notEmpty().withMessage('Password cannot be empty'),
     ]),
     validate([
         body('user.email').custom(async (email, { req }) => {
             const user = await User.findOne({ email })
-                .select(['email', 'username', 'bio', 'image', 'password'])
+                .select(['email', 'username', 'bio', 'image', 'password']) // Output the respective fields (with id field by default)
             if (!user) {
                 return Promise.reject('User does not exist')
             }
+            // Mount the data into the request object (to be used on subsequent middlewares if it's the case)
             req.user = user
         })
     ]),
     validate([
         body('user.password').custom(async (password, { req }) => {
             if (md5(password) !== req.user.password) {
-                return Promise.reject('wrong password')
+                return Promise.reject('Password error')
             }
         })
     ])

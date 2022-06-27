@@ -17,6 +17,8 @@ exports.updateArticle = [
     validate([
         validate.isValidObjectId(['params'], 'slug')
     ]),
+    // Check if the article exists
+    // Modify whether the author of the article is the currently logged in user
     async (req, res, next) => {
         const articleId = req.params.slug
         const article = await Article.findById(articleId)

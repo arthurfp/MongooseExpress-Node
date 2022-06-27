@@ -7,7 +7,7 @@ require('./model')
 
 const app = express()
 
-app.use(morgan('dev')) 
+app.use(morgan('dev'))
 
 app.use(express.json())
 
@@ -16,7 +16,6 @@ app.use(cors())
 const PORT = process.env.PORT || 3000
 
 app.use('/api', router)
-
 app.use(errorHandler())
 
 app.listen(PORT, () => {

@@ -1,5 +1,6 @@
 const { Article, User } = require('../model')
 
+// Get list of articles
 exports.getArticles = async (req, res, next) => {
     try {
         const {
@@ -13,7 +14,7 @@ exports.getArticles = async (req, res, next) => {
         const filter = {}
 
         if (tag) {
-            filter.tagList = tag
+            filter.tagList = tag // query the fields contained in tagList
         }
 
         if (author) {
@@ -25,7 +26,7 @@ exports.getArticles = async (req, res, next) => {
             .skip(Number.parseInt(offset))
             .limit(Number.parseInt(limit))
             .sort({
-                createdAt: -1
+                createdAt: -1 // -1 descending, 1 ascending
             })
 
         const articlesCount = await Article.countDocuments()
@@ -39,14 +40,17 @@ exports.getArticles = async (req, res, next) => {
     }
 }
 
+// Get the list of author articles that the user follows
 exports.getFeedArticles = async (req, res, next) => {
     try {
+        // process the request
         res.send('get /articles/feed')
     } catch (error) {
         next(error)
     }
 }
 
+// Get article
 exports.getArticle = async (req, res, next) => {
     try {
         const article = await Article.findById(req.params.slug)
@@ -62,6 +66,7 @@ exports.getArticle = async (req, res, next) => {
     }
 }
 
+// Create article
 exports.createArticle = async (req, res, next) => {
     try {
         const article = new Article(req.body.article)
@@ -76,6 +81,7 @@ exports.createArticle = async (req, res, next) => {
     }
 }
 
+// Update article
 exports.updateArticle = async (req, res, next) => {
     try {
         const article = req.article
@@ -92,32 +98,41 @@ exports.updateArticle = async (req, res, next) => {
     }
 }
 
+// Delete article
 exports.deleteArticle = async (req, res, next) => {
     try {
-        res.send('delete /articles/:slug')
+        const article = req.article
+        await article.remove()
+        res.status(204).end()
     } catch (error) {
         next(error)
     }
 }
 
+// Add comments to article
 exports.createArticleComment = async (req, res, next) => {
     try {
+        // process the request
         res.send('post /articles/:slug/comments')
     } catch (error) {
         next(error)
     }
 }
 
+// Get article comments
 exports.getArticleComments = async (req, res, next) => {
     try {
+        // process the request
         res.send('get /articles/:slug/comments')
     } catch (error) {
         next(error)
     }
 }
 
+// Delete article comments
 exports.deleteArticleComment = async (req, res, next) => {
     try {
+        // process the request
         res.send('delete /articles/:slug/comments/:id')
     } catch (error) {
         next(error)
