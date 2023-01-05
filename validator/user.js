@@ -1,7 +1,7 @@
 const { body } = require('express-validator')
 const validate = require('../middleware/validate')
 const { User } = require('../model')
-const md5 = require('../util/md5')
+const sha256 = require('../util/sha256')
 
 exports.register = validate([ // 1. Configure validation rules
     body('user.username')
@@ -40,7 +40,7 @@ exports.login = [
     ]),
     validate([
         body('user.password').custom(async (password, { req }) => {
-            if (md5(password) !== req.user.password) {
+            if (sha256(password) !== req.user.password) {
                 return Promise.reject('Password error')
             }
         })
